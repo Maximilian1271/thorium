@@ -1,6 +1,6 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const { prefix, token } = require('./config.json');
+const { prefix, token, welcome } = require('./config.json');
 const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL']});
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -12,15 +12,26 @@ const cooldowns = new Discord.Collection();
 client.once('ready', () => {
     console.log('Ready!');
 });
+client.on('guildCreate', async (guild)=>{
+    const auditLog=await guild.fetchAuditLogs({type:28})
+        .then(audit=>audit.entries.last().executor.send(`Hi ${audit.entries.last().executor.username}!\n`+welcome))
+        .catch(console.error);
+});
 client.on('message', message => {
+    //check if prefix is invoked and message isn't from the or any other bot
     if (!message.content.startsWith(prefix) || message.author.bot) return;
+    //prepare arguments
     const args = message.content.slice(prefix.length).trim().split(/ +/);
+    //sanitize user input and scan for .js file bearing the command name
     const commandName = args.shift().toLowerCase();
     const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+    //if it fails, fuck up
     if (!command) return;
+    //if 'guildOnly' argument is set, refuse execution inside DM's
     if (command.guildOnly && message.channel.type === 'dm') {
         return message.reply('I can\'t execute that command inside DMs!');
     }
+    //check if command requires arguments, fuck up if user didn't provide any
     if (command.args && !args.length) {
         let reply = `You didn't provide any arguments, ${message.author}!`;
         if (command.usage) {
@@ -28,6 +39,7 @@ client.on('message', message => {
         }
         return message.channel.send(reply);
     }
+    //check if the command has a cooldown property and run date/time magic to make cooldown happen
     if (!cooldowns.has(command.name)) {
         cooldowns.set(command.name, new Discord.Collection());
     }
@@ -44,10 +56,11 @@ client.on('message', message => {
     timestamps.set(message.author.id, now);
     setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
     try {
-        command.execute(message, args);
+        command.execute(message, args, Discord);
     } catch (error) {
         console.error(error);
         message.reply('there was an error trying to execute that command!');
     }
 });
+//send everything
 client.login(token);
