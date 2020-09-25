@@ -1,6 +1,7 @@
 module.exports = {
     name: 'voteban',
-    description: 'Initiate a voteban on a person',                                                          //To-Do:Implement wizard command, implement wizard installation logic
+    description: 'Initiate a voteban on a person',
+    guildOnly: true,                                                                                        //To-Do:Implement wizard command, implement wizard installation logic
     execute(message) {                                                                                      //To-Do:Implement reason param
         if (!message.mentions.users.size) {                                                                 //To-Do:Implement dynamic ban duration
             return message.reply('at least one user needs to be tagged!');                                  //To-Do:Implement option to prune target

@@ -1,6 +1,7 @@
 module.exports = {
     name: 'fetch-roles',
     description: 'This command fetches all roles on the server',
+    guildOnly: true,
     execute(message, args, Discord) {
         let rolemap = message.guild.roles.cache
             .sort((a, b) => b.position + a.position)
