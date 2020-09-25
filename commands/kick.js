@@ -1,9 +1,9 @@
 module.exports = {
     name: 'voteban',
-    description: 'Initiate a voteban on a person',
-    execute(message) {
-        if (!message.mentions.users.size) {
-            return message.reply('at least one user needs to be tagged!');
+    description: 'Initiate a voteban on a person',                                                          //To-Do:Implement wizard command, implement wizard installation logic
+    execute(message) {                                                                                      //To-Do:Implement reason param
+        if (!message.mentions.users.size) {                                                                 //To-Do:Implement dynamic ban duration
+            return message.reply('at least one user needs to be tagged!');                                  //To-Do:Implement option to prune target
         }
         const taggedOffender = message.mentions.users.first();
         const user = message.author.username;
@@ -13,11 +13,11 @@ module.exports = {
                 const filter = (reaction, user) => {
                     return reaction.emoji.name === '👍'
                 };
-                const collector = message.createReactionCollector(filter, {time: 10000});
+                const collector = message.createReactionCollector(filter, {time: 10000});           //To-Do:Make Dynamic (Time)
                 collector.on('collect', (reaction, user) => {
                     let uid = message.guild.members.cache.get(user.id);
-                    if (uid._roles.find(roleid => roleid === '758619799642308618')) {
-                        console.log("Role found!")
+                    if (uid._roles.find(roleid => roleid === '758619799642308618')) {             //To-Do:Make Dynamic (Permitted Role[s])
+                        console.log(`${user.username}'s vote has been successfully registered.`)
                     } else {
                         message.guild.roles.fetch('758619799642308618')
                             .then(role => message.channel
