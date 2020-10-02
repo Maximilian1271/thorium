@@ -1,7 +1,7 @@
 module.exports = {
     name: 'voteban',
-    description: 'Initiate a voteban on a person',
-    guildOnly: true,                                                                                        //To-Do:Implement wizard command, implement wizard installation logic
+    description: 'Initiate a voteban on a person',                                                          //To-Do:Destroy the humble beginnings of my poorly chosen .json serverconfig idea, switch to some DB
+    guildOnly: true,                                                                                        //To-Do:Implement wizard installation logic
     execute(message) {                                                                                      //To-Do:Implement reason param
         if (!message.mentions.users.size) {                                                                 //To-Do:Implement dynamic ban duration
             return message.reply('at least one user needs to be tagged!');                                  //To-Do:Implement option to prune target
@@ -29,7 +29,7 @@ module.exports = {
                         console.log(`A reaction has been removed by "${user.username}" due to insufficient role power`)
                     }
                 }).on('end', (collected, reason) => {
-                    console.log(collected.first().count)
+                    console.log((collected.first().count)-1)
                 });
             });
     },

@@ -1,0 +1,7 @@
+// module.exports={
+//     name: 'debugGuildCreate',
+//     description: 'Simply run the GuildCreate emitter for debug purpose only.',
+//     execute(client, message){
+//         client.emit('guildCreate', message.guild);
+//     }
+// }
