@@ -13,26 +13,7 @@ client.once('ready', () => {
     console.log('Ready!');
 });
 client.on('guildCreate', async (guild)=>{
-    //execute on first guild join
-    const auditLog=await guild.fetchAuditLogs({type:28})
-    const invitee=auditLog.entries.last().executor;
-    let botOwner=new Map().set("Owner", invitee)
-    let jsontxt=JSON.stringify(Array.from(botOwner.entries()))
-    //fetch guild audit log to get executor/invitee
-    try{
-        //if invitee has DM's enabled, send welcome message
-        await invitee.send(`Hi ${invitee.username}!\n`+welcome);
-        await fs.writeFile('./serverConfig/'+guild.id+".srvconf", jsontxt, () => {console.log("Shits been saved lads!")});
-    }
-    catch (error){
-        if (error.code===50007){
-            //if invitee has DM's disabled and APIError 50007(Cannot send messages to this user) occurs, send welcome message to systemChannel
-            await guild.systemChannel.send(`${invitee.toString()}.\n It seems like you have turned off \"DM's from members on this Server.\"\n Please execute \">wizard\" in a trusted channel.`);
-            await fs.writeFile('./serverConfig/'+guild.id+".srvconf", jsontxt, () => {console.log("Shits been saved lads!")});
-        }
-        //this is for when shit really hits the fan like api timeouts, bot ban, etc. whatever.
-        else{error.console;}
-    }
+
 });
 client.on('message', (message) => {
     if (debug){
